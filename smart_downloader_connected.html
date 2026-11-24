@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080d18">
+<title>Smart Downloader</title>
+<style>
+:root{--bg:#080d18;--panel:#111a2b;--panel2:#0d1524;--line:#263650;--text:#f4f7ff;--muted:#9aa9c2;--blue:#4388ff;--cyan:#27d6e8;--good:#65ddb0;--danger:#ff7d8a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0%,#142c50 0,transparent 35%),var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+.wrap{max-width:760px;margin:auto;padding:22px 16px 40px}.top{display:flex;align-items:center;gap:12px;margin:8px 0 28px}.logo{width:46px;height:46px;border-radius:15px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:grid;place-items:center;font-size:23px;box-shadow:0 8px 30px #237bff55}.brand{font-size:20px;font-weight:800;letter-spacing:.2px}.tag{font-size:12px;color:var(--muted)}
+.hero h1{font-size:clamp(27px,6vw,40px);line-height:1.12;margin:0 0 10px}.hero p{color:var(--muted);margin:0 0 22px}.panel{background:linear-gradient(145deg,#131f33,#0d1524);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 18px 55px #0005}
+.label{font-size:13px;color:#c4d1e7;font-weight:700;margin:0 0 10px}.platforms{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:20px}.platform{border:1px solid var(--line);border-radius:13px;padding:12px 5px;background:#0b1423;color:var(--text);font-weight:700;cursor:pointer}.platform.active{border-color:var(--cyan);background:#12304a;box-shadow:inset 0 0 0 1px #27d6e855}.platform span{display:block;font-size:21px;margin-bottom:3px}.field{display:flex;gap:8px}.field input{min-width:0;flex:1;background:#080f1d;border:1px solid #30415e;border-radius:13px;padding:14px;color:white;font-size:14px;outline:none}.field input:focus{border-color:var(--cyan)}button{font:inherit}.primary{border:0;border-radius:13px;padding:13px 17px;color:#06111c;font-weight:800;background:linear-gradient(100deg,var(--cyan),#6ca6ff);cursor:pointer}.hint{font-size:12px;color:var(--muted);margin:9px 2px 0}.notice{display:none;margin-top:15px;padding:13px;border-radius:13px;background:#10283a;border:1px solid #24516b;color:#d9f7ff;font-size:13px}.notice.error{background:#351a27;border-color:#793446;color:#ffdce1}.result{display:none;margin-top:15px;border:1px solid #28536a;border-radius:14px;padding:14px;background:#0b1c2b}.result strong{display:block;margin-bottom:4px}.result small{color:var(--muted);overflow-wrap:anywhere;display:block}.section{margin-top:22px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.section h2{font-size:17px;margin:0}.clear{border:1px solid var(--line);background:#111b2c;color:#c5d4e9;padding:7px 10px;border-radius:9px;font-size:12px;cursor:pointer}.history{display:grid;gap:9px}.empty{border:1px dashed #34445e;border-radius:14px;padding:18px;text-align:center;color:var(--muted);font-size:13px}.item{border:1px solid var(--line);border-radius:13px;padding:12px;background:#0d1727;display:flex;gap:10px;align-items:flex-start}.item-main{min-width:0;flex:1}.item-title{font-weight:700;font-size:13px}.item-url{font-size:12px;color:var(--muted);overflow-wrap:anywhere;margin-top:3px}.status{font-size:11px;color:#a9d7ff;margin-top:6px}.remove{border:0;background:transparent;color:#9fb0c8;font-size:18px;cursor:pointer}.features{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.feature{border:1px solid var(--line);background:#101a2b;border-radius:14px;padding:14px}.feature b{display:block;font-size:13px}.feature small{color:var(--muted);font-size:12px}.foot{color:#8392aa;font-size:11px;text-align:center;margin-top:25px;line-height:1.6}
+@media(min-width:600px){.panel{padding:25px}.features{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top"><div class="logo">⬇</div><div><div class="brand">Smart Downloader</div><div class="tag">Simple • Secure • Smart</div></div></header>
+  <section class="hero"><h1>আপনার লিংক, এক জায়গায়</h1><p>অনুমতিপ্রাপ্ত মিডিয়া লিংক সাজিয়ে রাখুন এবং ডাউনলোডের অগ্রগতি পরিচালনার প্রস্তুতি নিন।</p></section>
+  <section class="panel">
+    <div class="label">প্ল্যাটফর্ম বেছে নিন</div>
+    <div class="platforms">
+      <button class="platform active" data-platform="Instagram"><span>◎</span>Instagram</button>
+      <button class="platform" data-platform="Facebook"><span>f</span>Facebook</button>
+      <button class="platform" data-platform="YouTube"><span>▶</span>YouTube</button>
+    </div>
+    <div class="label" for="url">ভিডিও বা পোস্টের লিংক</div>
+    <div class="field"><input id="url" type="url" placeholder="https://..." autocomplete="url"><button class="primary" id="continue">Continue</button></div>
+    <div class="hint">শুধু নিজের তৈরি, অনুমতিপ্রাপ্ত বা প্ল্যাটফর্মে ডাউনলোডের অনুমতি থাকা কনটেন্টের লিংক দিন।</div>
+    <div class="notice" id="notice" role="status"></div>
+    <div class="result" id="result"><strong>লিংকটি হিস্টরিতে যোগ হয়েছে</strong><small id="resultUrl"></small><div class="status">অবস্থা: অনুমোদিত ডাউনলোড সার্ভিস সংযোগের অপেক্ষায়</div></div>
+  </section>
+  <section class="section">
+    <div class="section-head"><h2>Download History</h2><button class="clear" id="clear">Clear history</button></div>
+    <div class="history" id="history"><div class="empty">এখনও কোনো লিংক যোগ করা হয়নি।</div></div>
+  </section>
+  <section class="section"><div class="section-head"><h2>Smart features</h2></div>
+    <div class="features">
+      <div class="feature"><b>🔗 Link Processing</b><small>লিংক যাচাই ও প্ল্যাটফর্ম শনাক্তকরণ</small></div>
+      <div class="feature"><b>🕘 Download History</b><small>সাম্প্রতিক লিংক এই ব্রাউজারে সংরক্ষণ</small></div>
+      <div class="feature"><b>🛡️ Privacy First</b><small>হিস্টরি মুছে ফেলার নিয়ন্ত্রণ আপনার</small></div>
+      <div class="feature"><b>⚙️ Quality Options</b><small>অনুমোদিত সার্ভিস যুক্ত হলে</small></div>
+      <div class="feature"><b>📱 Android Ready</b><small>অ্যাপ সংস্করণের জন্য প্রস্তুত UI</small></div>
+      <div class="feature"><b>💬 Help & Support</b><small>সহায়তা বিভাগ যুক্ত করার জায়গা</small></div>
+    </div>
+  </section>
+  <footer class="foot">Smart Downloader • Prototype v2<br>এই সংস্করণে আসল ভিডিও ডাউনলোড হয় না। Instagram, Facebook বা YouTube-এর বিধিনিষেধ পাশ কাটিয়ে কনটেন্ট ডাউনলোড করা হবে না।</footer>
+</main>
+<script>
+const API_BASE = "https://smart-downloader-api-ws82.onrender.com";
+const buttons = [...document.querySelectorAll(".platform")];
+let platform = "Instagram";
+
+buttons.forEach(button => button.addEventListener("click", () => {
+  buttons.forEach(item => item.classList.remove("active"));
+  button.classList.add("active");
+  platform = button.dataset.platform;
+}));
+
+const urlInput = document.getElementById("url");
+const notice = document.getElementById("notice");
+const result = document.getElementById("result");
+
+function showNotice(message, isError = false) {
+  notice.textContent = message;
+  notice.className = isError ? "notice error" : "notice";
+  notice.style.display = "block";
+}
+
+async function loadHistory() {
+  const box = document.getElementById("history");
+  box.innerHTML = '<div class="empty">হিস্টরি লোড হচ্ছে...</div>';
+  try {
+    const response = await fetch(`${API_BASE}/api/links`);
+    if (!response.ok) throw new Error("History load failed");
+    const data = await response.json();
+    renderHistory(data.items || []);
+  } catch (error) {
+    box.innerHTML = '<div class="empty">সার্ভারের সঙ্গে সংযোগ হচ্ছে না। একটু পরে আবার চেষ্টা করুন।</div>';
+  }
+}
+
+function renderHistory(items) {
+  const box = document.getElementById("history");
+  box.innerHTML = "";
+  if (!items.length) {
+    box.innerHTML = '<div class="empty">এখনও কোনো লিংক যোগ করা হয়নি।</div>';
+    return;
+  }
+
+  items.forEach(item => {
+    const row = document.createElement("div");
+    row.className = "item";
+
+    const main = document.createElement("div");
+    main.className = "item-main";
+
+    const title = document.createElement("div");
+    title.className = "item-title";
+    title.textContent = `${item.platform} • ${new Date(item.createdAt).toLocaleString()}`;
+
+    const link = document.createElement("div");
+    link.className = "item-url";
+    link.textContent = item.url;
+
+    const status = document.createElement("div");
+    status.className = "status";
+    status.textContent = "অপেক্ষমাণ — অনুমোদিত ডাউনলোড ইন্টিগ্রেশন প্রয়োজন";
+
+    main.append(title, link, status);
+
+    const del = document.createElement("button");
+    del.className = "remove";
+    del.setAttribute("aria-label", "Remove history item");
+    del.textContent = "×";
+    del.addEventListener("click", async () => {
+      try {
+        const response = await fetch(`${API_BASE}/api/links/${encodeURIComponent(item.id)}`, {
+          method: "DELETE"
+        });
+        if (!response.ok) throw new Error("Delete failed");
+        await loadHistory();
+      } catch {
+        showNotice("হিস্টরি মুছতে সমস্যা হয়েছে। আবার চেষ্টা করুন।", true);
+      }
+    });
+
+    row.append(main, del);
+    box.append(row);
+  });
+}
+
+document.getElementById("continue").addEventListener("click", async () => {
+  notice.style.display = "none";
+  result.style.display = "none";
+
+  const value = urlInput.value.trim();
+  if (!value) {
+    showNotice("আগে একটি লিংক দিন।", true);
+    return;
+  }
+
+  let parsed;
+  try {
+    parsed = new URL(value);
+  } catch {
+    showNotice("সঠিক লিংক দিন।", true);
+    return;
+  }
+
+  if (parsed.protocol !== "https:") {
+    showNotice("শুধু HTTPS লিংক গ্রহণ করা হবে।", true);
+    return;
+  }
+
+  const button = document.getElementById("continue");
+  button.disabled = true;
+  button.textContent = "Checking...";
+
+  try {
+    const response = await fetch(`${API_BASE}/api/links`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ platform, url: parsed.href })
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "এই প্ল্যাটফর্মের সঙ্গে লিংকটি মিলছে না।");
+    }
+
+    document.getElementById("resultUrl").textContent = data.item.url;
+    result.style.display = "block";
+    showNotice("লিংক যাচাই হয়েছে এবং সার্ভারের History-তে সংরক্ষিত হয়েছে। এটি ডাউনলোডের নিশ্চয়তা নয়।");
+    urlInput.value = "";
+    await loadHistory();
+  } catch (error) {
+    showNotice(error.message || "সার্ভারের সঙ্গে সংযোগ করা যায়নি।", true);
+  } finally {
+    button.disabled = false;
+    button.textContent = "Continue";
+  }
+});
+
+document.getElementById("clear").addEventListener("click", async () => {
+  if (!confirm("সব হিস্টরি মুছতে চাইলে প্রতিটি আইটেম আলাদাভাবে মুছতে হবে।")) return;
+  showNotice("প্রতিটি History item-এর পাশে × চাপলে সেটি মুছে যাবে।");
+});
+
+loadHistory();
+</script>
+</body>
+</html>
