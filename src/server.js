@@ -5,8 +5,8 @@ const path = require("node:path");
 const crypto = require("node:crypto");
 
 const PORT = process.env.PORT || 3000;
-const DATA_DIR = path.join(__dirname, "..", "data");
-const DATA_FILE = path.join(DATA_DIR, "history.json");
+const DIR = path.join(__dirname, "..", "data");
+const FILE = path.join(DIR, "history.json");
 
 const hosts = {
   instagram: ["instagram.com"],
@@ -14,39 +14,38 @@ const hosts = {
   youtube: ["youtube.com", "youtu.be"]
 };
 
-fs.mkdirSync(DATA_DIR, { recursive: true });
+fs.mkdirSync(DIR, { recursive: true });
+if (!fs.existsSync(FILE)) fs.writeFileSync(FILE, "[]");
 
-if (!fs.existsSync(DATA_FILE)) {
-  fs.writeFileSync(DATA_FILE, "[]");
-}
-
-function readHistory() {
+function read() {
   try {
-    return JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
+    return JSON.parse(fs.readFileSync(FILE, "utf8"));
   } catch {
     return [];
   }
 }
 
-function writeHistory(items) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(items, null, 2));
+function write(items) {
+  fs.writeFileSync(FILE, JSON.stringify(items, null, 2));
 }
 
 function send(res, status, data) {
   res.writeHead(status, {
     "Content-Type": "application/json; charset=utf-8",
-    "Cache-Control": "no-store"
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type"
   });
   res.end(JSON.stringify(data));
 }
 
-function readBody(req) {
+function body(req) {
   return new Promise((resolve, reject) => {
     let raw = "";
     req.on("data", chunk => {
       raw += chunk;
       if (raw.length > 8192) {
-        reject(new Error("BODY_TOO_LARGE"));
+        reject(Error("BODY_TOO_LARGE"));
         req.destroy();
       }
     });
@@ -54,7 +53,7 @@ function readBody(req) {
       try {
         resolve(JSON.parse(raw || "{}"));
       } catch {
-        reject(new Error("INVALID_JSON"));
+        reject(Error("INVALID_JSON"));
       }
     });
     req.on("error", reject);
@@ -64,6 +63,10 @@ function readBody(req) {
 http.createServer(async (req, res) => {
   const url = new URL(req.url, "http://localhost");
 
+  if (req.method === "OPTIONS") {
+    return send(res, 200, {});
+  }
+
   if (req.method === "GET" && url.pathname === "/health") {
     return send(res, 200, {
       success: true,
@@ -72,17 +75,17 @@ http.createServer(async (req, res) => {
   }
 
   if (req.method === "GET" && url.pathname === "/api/links") {
-    return send(res, 200, { items: readHistory() });
+    return send(res, 200, { items: read() });
   }
 
   if (req.method === "POST" && url.pathname === "/api/links") {
     try {
-      const body = await readBody(req);
-      const platform = String(body.platform || "").toLowerCase();
+      const data = await body(req);
+      const platform = String(data.platform || "").toLowerCase();
 
       let parsed;
       try {
-        parsed = new URL(String(body.url || ""));
+        parsed = new URL(String(data.url || ""));
       } catch {
         return send(res, 400, { error: "INVALID_URL" });
       }
@@ -106,17 +109,22 @@ http.createServer(async (req, res) => {
         createdAt: new Date().toISOString()
       };
 
-      writeHistory([item, ...readHistory()].slice(0, 100));
+      write([item, ...read()].slice(0, 100));
 
       return send(res, 201, {
         success: true,
-        item,
-        message: "Link verified. No media downloaded."
+        item
       });
-
     } catch (error) {
       return send(res, 400, { error: error.message });
     }
+  }
+
+  const match = url.pathname.match(/^\/api\/links\/([a-f0-9-]+)$/i);
+
+  if (req.method === "DELETE" && match) {
+    write(read().filter(item => item.id !== match[1]));
+    return send(res, 200, { success: true });
   }
 
   return send(res, 404, { error: "NOT_FOUND" });
